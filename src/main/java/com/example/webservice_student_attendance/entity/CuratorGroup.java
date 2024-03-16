@@ -15,14 +15,15 @@ public class CuratorGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "curator_group_id")
     private Long id;
-//    @ManyToOne
-//    @JoinColumn(name = "id")
-//    private Teacher teacher;
-//    @ManyToOne
-//    @JoinColumn(name = "id")
-//    private StudyGroup studyGroup;
-//    @NotNull
-//    private Date date;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+    @ManyToOne
+    @JoinColumn(name = "study_group_id")
+    private StudyGroup studyGroup;
+    @NotNull
+    private Date date;
 
 }

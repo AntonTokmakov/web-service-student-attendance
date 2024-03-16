@@ -18,17 +18,25 @@ public class Institute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "institute_id")
     private Long id;
+
     @NotNull
     @Size(min = 2, max = 30)
     private String firstname;
+
     @NotNull
     @Size(min = 4, max = 50)
     private String lastname;
+
     @Size(min = 4, max = 50)
     private String otchestvo;
+
     private String office;
 
     @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "institute")
     private List<Kafedra> kafedraList;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "general_contact_info_id")
+    private GeneralContactInfo generalContactInfo;
 }

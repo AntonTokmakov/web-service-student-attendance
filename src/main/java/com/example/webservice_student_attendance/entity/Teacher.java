@@ -30,13 +30,13 @@ public class Teacher {
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
     private Kafedra kafedra;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "appointment_teacher_lesson",
-//            joinColumns = @JoinColumn(name = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id")
-//    )
-//    private List<Lesson> teacher;
+    @ManyToMany
+    @JoinTable(
+            name = "appointment_teacher_lesson",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private List<Lesson> teacher;
 
 //    @OneToMany
 //    @JoinColumn(name = "id")

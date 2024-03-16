@@ -18,6 +18,7 @@ public class StudyGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "study_group_id")
     private Long id;
     @NotNull
     @Size(min = 2, max = 30)
@@ -38,12 +39,12 @@ public class StudyGroup {
     private Specialization specialization;
     @NotNull
     private Date yearAdmission;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "assigning_group_lesson",
-//            joinColumns = @JoinColumn(name = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id")
-//    )
-//    private List<Lesson> lessonList;
+    @ManyToMany
+    @JoinTable(
+            name = "assigning_group_lesson",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private List<Lesson> lessonList;
 
 }
