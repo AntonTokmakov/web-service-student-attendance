@@ -2,28 +2,28 @@ package com.example.webservice_student_attendance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table
 @Data
 @NoArgsConstructor
-public class CuratorGroup {
-
+public class ContactInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "curator_group_id")
+    @Column(name = "contact_info_id")
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private StudyGroup studyGroup;
-    @NotNull
-    private Date date;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "type_contact_id")
+    private TypeContactInfo typeContact;
+
+    @NotNull
+    @Size(min = 2, max = 100)
+    private String contactInfo;
 }

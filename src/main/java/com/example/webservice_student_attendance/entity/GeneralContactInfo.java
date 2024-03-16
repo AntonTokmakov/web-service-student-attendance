@@ -13,6 +13,7 @@ public class GeneralContactInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn
+    @Column(name = "general_contact_info_id")
     private Long id;
 
 }

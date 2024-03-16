@@ -15,6 +15,7 @@ public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lesson_id")
     private Long id;
     @NotNull
     @ManyToOne
@@ -36,23 +37,20 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "type_lesson_id")
     private TypeLesson typeLesson;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "assigning_group_lesson",
-//            joinColumns = @JoinColumn(name = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id")
-//    )
-//    private List<StudyGroup> studyGroupList;
+    @ManyToMany
+    @JoinTable(
+            name = "assigning_group_lesson",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private List<StudyGroup> studyGroupList;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "appointment_teacher_lesson",
-//            joinColumns = @JoinColumn(name = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id")
-//    )
-//    private List<Teacher> teacherList;
-//    @OneToMany
-//    @JoinColumn(name = "id")
-//    private List<CuratorGroup> teacherList;
+    @ManyToMany
+    @JoinTable(
+            name = "appointment_teacher_lesson",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private List<Teacher> teacherList;
 
 }

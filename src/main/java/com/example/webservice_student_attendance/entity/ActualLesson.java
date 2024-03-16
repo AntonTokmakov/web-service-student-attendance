@@ -17,7 +17,7 @@ public class ActualLesson {
     @Column(name = "actual_lesson_id")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "lesson_id")
     private Lesson lesson;
     private Date date;
 

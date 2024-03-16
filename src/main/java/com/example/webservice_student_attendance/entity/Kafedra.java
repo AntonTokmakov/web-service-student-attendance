@@ -18,9 +18,11 @@ public class Kafedra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "kafedra_id")
     private Long id;
+
     @NotNull
     @Size(min = 2, max = 30)
     private String name;
+
     @NotNull
     @Size(min = 1, max = 20)
     private String shortName;
@@ -28,6 +30,10 @@ public class Kafedra {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "institute_id")
     private Institute institute;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "general_contact_info_id")
+    private GeneralContactInfo generalContactInfo;
 
 }
 

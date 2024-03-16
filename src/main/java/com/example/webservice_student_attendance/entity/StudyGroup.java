@@ -38,12 +38,12 @@ public class StudyGroup {
     private Specialization specialization;
     @NotNull
     private Date yearAdmission;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "assigning_group_lesson",
-//            joinColumns = @JoinColumn(name = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id")
-//    )
-//    private List<Lesson> lessonList;
+    @ManyToMany
+    @JoinTable(
+            name = "assigning_group_lesson",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private List<Lesson> lessonList;
 
 }
