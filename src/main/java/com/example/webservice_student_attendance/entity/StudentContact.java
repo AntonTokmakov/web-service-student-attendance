@@ -12,6 +12,7 @@ public class StudentContact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_contact_info_id")
     private Long id;
     @ManyToOne
     @JoinColumn(name = "student_id")

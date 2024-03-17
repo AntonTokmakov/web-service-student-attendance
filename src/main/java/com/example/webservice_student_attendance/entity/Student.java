@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table
@@ -18,18 +19,29 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
     private Long id;
+
     @NotNull
     @Size(min = 2, max = 64)
     private String firstName;
+
     @NotNull
     @Size(min = 2, max = 64)
     private String lastName;
+
     @NotNull
     @Size(min = 2, max = 64)
     private String otchestvo;
+
     private Date birthday;
+
     private boolean isMonitor;
+
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "study_group_id")
     private StudyGroup studyGroup;
+
+    @OneToMany
+    @JoinColumn(name = "student_contact_info_id")
+    private List<StudentContact> studentContactList;
+
 }

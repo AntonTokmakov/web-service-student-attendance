@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table
 @Data
@@ -34,6 +36,20 @@ public class Kafedra {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_contact_info_id")
     private GeneralContactInfo generalContactInfo;
+
+
+
+    @OneToMany
+    @JoinColumn(name = "study_group_id")
+    private List<StudyGroup> studyGroupList;
+
+    @OneToMany
+    @JoinColumn(name = "discipline_id")
+    private List<Discipline> disciplineList;
+
+    @OneToMany
+    @JoinColumn(name = "teacher_id")
+    private List<Teacher> teacherList;
 
 }
 
