@@ -36,10 +36,5 @@ public class Teacher {
             joinColumns = @JoinColumn(name = "id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id")
     )
-    private List<Lesson> teacher;
-
-//    @OneToMany
-//    @JoinColumn(name = "id")
-//    private List<CuratorGroup> studentGroupList;
-
+    private List<Lesson> lessonList;
 }

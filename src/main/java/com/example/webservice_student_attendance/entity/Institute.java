@@ -2,6 +2,7 @@ package com.example.webservice_student_attendance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,15 +22,13 @@ public class Institute {
 
     @NotNull
     @Size(min = 2, max = 30)
-    private String firstname;
+    private String name;
 
     @NotNull
     @Size(min = 4, max = 50)
-    private String lastname;
+    private String shortName;
 
-    @Size(min = 4, max = 50)
-    private String otchestvo;
-
+//    @Pattern(regexp = "^\\d{3}(?:ГТ|Г)?$")
     private String office;
 
     @OneToMany(cascade = CascadeType.ALL,

@@ -29,7 +29,7 @@ public class StudyGroup {
     @Column(unique = true)
     private String shortName;
     @Max(50)
-    private Integer size;
+    private Integer groupSize;
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
     private Kafedra kafedra;

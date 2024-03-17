@@ -3,6 +3,7 @@ package com.example.webservice_student_attendance.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,9 @@ public class Kafedra {
     @NotNull
     @Size(min = 1, max = 20)
     private String shortName;
+
+//    @Pattern(regexp = "^\\d{3}(?:ГТ|Г)?$")
+    private String office;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "institute_id")

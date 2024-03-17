@@ -18,7 +18,7 @@ public class Discipline {
     @Column(name = "discipline_id")
     private Long id;
     @NotNull
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 80)
     private String name;
     @NotNull
     @Size(min = 1, max = 30)
