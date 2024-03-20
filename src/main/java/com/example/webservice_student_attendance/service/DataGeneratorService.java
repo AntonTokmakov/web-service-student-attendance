@@ -36,9 +36,10 @@ public class DataGeneratorService {
     private final WeekdayRepository weekdayRepository;
     Faker faker = new Faker();
     Random random = new Random();
+    int j = 1;
     public void allAddEntityDb(){
 
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 50; i++) {
             addInstitute();
             addKafedra(instituteRepository.findAll().get(random.nextInt(0, i)));
             addTeacher(kafedraRepository.findAll().get(random.nextInt(0, i)));
@@ -55,7 +56,7 @@ public class DataGeneratorService {
         Institute institute = new Institute();
         institute.setName(faker.educator().university());
         institute.setShortName("ПИТИП");
-        institute.setOffice(random.nextInt(300) + "ГТ");
+        institute.setOffice(j++ + "ГТ");
         instituteRepository.save(institute);
 
     }
@@ -64,7 +65,7 @@ public class DataGeneratorService {
         Kafedra kafedra = new Kafedra();
         kafedra.setName(faker.educator().university());
         kafedra.setShortName("ПИТИП");
-        kafedra.setOffice(random.nextInt(300) + "ГТ");
+        kafedra.setOffice(j++ + "ГТ");
         kafedra.setInstitute(institute);
         kafedraRepository.save(kafedra);
     }
@@ -88,8 +89,8 @@ public class DataGeneratorService {
 
     public void addStudyGroup(Kafedra kafedra){
         StudyGroup studyGroup = new StudyGroup();
-        studyGroup.setName("Информационные системы " + random.nextInt(100, 300));
-        studyGroup.setShortName("ИС - " + random.nextInt(100, 300));
+        studyGroup.setName("Информационные системы " + j++);
+        studyGroup.setShortName("ИС - " + j++);
         studyGroup.setKafedra(kafedra);
         studyGroup.setGroupSize(30);
         studyGroup.setYearAdmission(faker.date().birthday());

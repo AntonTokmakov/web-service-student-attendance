@@ -31,9 +31,9 @@ public class Institute {
 //    @Pattern(regexp = "^\\d{3}(?:ГТ|Г)?$")
     private String office;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "institute")
-    private List<Kafedra> kafedraList;
+//    @OneToMany(cascade = CascadeType.ALL,
+//            mappedBy = "institute")
+//    private List<Kafedra> kafedraList;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_contact_info_id")

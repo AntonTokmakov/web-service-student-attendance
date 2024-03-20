@@ -1,5 +1,6 @@
 package com.example.webservice_student_attendance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -37,11 +38,12 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "type_lesson_id")
     private TypeLesson typeLesson;
+
     @ManyToMany
     @JoinTable(
             name = "assigning_group_lesson",
             joinColumns = @JoinColumn(name = "lesson_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
+            inverseJoinColumns = @JoinColumn(name = "study_group_id")
     )
     private List<StudyGroup> studyGroupList;
 
@@ -49,7 +51,7 @@ public class Lesson {
     @JoinTable(
             name = "appointment_teacher_lesson",
             joinColumns = @JoinColumn(name = "lesson_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
+            inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
     private List<Teacher> teacherList;
 

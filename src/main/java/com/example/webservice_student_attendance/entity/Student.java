@@ -40,8 +40,8 @@ public class Student {
     @JoinColumn(name = "study_group_id")
     private StudyGroup studyGroup;
 
-    @OneToMany
-    @JoinColumn(name = "student_contact_info_id")
-    private List<StudentContact> studentContactList;
+//    @OneToMany
+//    @JoinColumn(name = "student_contact_info_id")
+//    private List<StudentContact> studentContactList;
 
 }

@@ -1,5 +1,6 @@
 package com.example.webservice_student_attendance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -43,17 +44,17 @@ public class Kafedra {
 
 
 
-    @OneToMany
-    @JoinColumn(name = "study_group_id")
-    private List<StudyGroup> studyGroupList;
-
-    @OneToMany
-    @JoinColumn(name = "discipline_id")
-    private List<Discipline> disciplineList;
-
-    @OneToMany
-    @JoinColumn(name = "teacher_id")
-    private List<Teacher> teacherList;
+//    @OneToMany
+//    @JoinColumn(name = "study_group_id")
+//    private List<StudyGroup> studyGroupList;
+//
+//    @OneToMany
+//    @JoinColumn(name = "discipline_id")
+//    private List<Discipline> disciplineList;
+//
+//    @OneToMany
+//    @JoinColumn(name = "teacher_id")
+//    private List<Teacher> teacherList;
 
 }
 

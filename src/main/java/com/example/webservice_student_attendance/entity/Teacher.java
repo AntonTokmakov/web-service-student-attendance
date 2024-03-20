@@ -1,5 +1,6 @@
 package com.example.webservice_student_attendance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +19,7 @@ public class Teacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "teacher_id")
     private Long id;
     @NotNull
     @Size(min = 2, max = 40)
@@ -30,10 +32,12 @@ public class Teacher {
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
     private Kafedra kafedra;
+
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "appointment_teacher_lesson",
-            joinColumns = @JoinColumn(name = "id"),
+            joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id")
     )
     private List<Lesson> lessonList;
