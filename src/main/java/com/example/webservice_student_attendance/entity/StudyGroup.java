@@ -6,9 +6,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +19,8 @@ import java.util.List;
 @Table
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StudyGroup {
 
     @Id
@@ -23,7 +28,6 @@ public class StudyGroup {
     @Column(name = "study_group_id")
     private Long id;
 
-    @NotNull
     @Size(min = 2, max = 30)
     @Column(unique = true)
     private String name;
@@ -40,13 +44,12 @@ public class StudyGroup {
     @JoinColumn(name = "kafedra_id")
     private Kafedra kafedra;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
     @NotNull
-    private Date yearAdmission;
+    private LocalDate yearAdmission;
 
     @JsonIgnore
     @ManyToMany

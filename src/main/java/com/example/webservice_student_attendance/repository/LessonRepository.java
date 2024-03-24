@@ -16,6 +16,9 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     Optional<List<Lesson>> findLessonsByStudyGroupListAndWeekdayOrderByNumberLesson(StudyGroup studyGroup, Weekday weekday);
 
+
+//    Optional<List<Lesson>> findLessonsByStudyGroupListAndWeekdaysList
+
 //    List<Lesson> findLessonsByStudyGroupList(StudyGroup studyGroup/*, WeekdayEnum weekday*/);
 //    List<Lesson> findLessonsByStudyGroupListEqualsAndWeekdayOrderByNumberLesson(StudyGroup studyGroup, WeekdayEnum weekday);
 }

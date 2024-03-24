@@ -3,6 +3,8 @@ package com.example.webservice_student_attendance.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,28 +14,34 @@ import java.util.List;
 @Table
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lesson_id")
     private Long id;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "discipline_id")
     private Discipline discipline;
-    @NotNull
+
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
     private Kafedra kafedra;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "number_lesson_id")
     private NumberLesson numberLesson;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "weekday_id")
     private Weekday weekday;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "type_lesson_id")

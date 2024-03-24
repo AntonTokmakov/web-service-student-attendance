@@ -15,3 +15,5 @@ INSERT INTO weekday (name) VALUES ('Вторник');
 INSERT INTO weekday (name) VALUES ('Среда');
 INSERT INTO weekday (name) VALUES ('Четверг');
 INSERT INTO weekday (name) VALUES ('Пятница');
+
+

@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface WeekdayRepository extends JpaRepository<Weekday, Long> {
 
-    Optional<Weekday> findByName(String weekdayEnum);
+    Optional<Weekday> findByNameIgnoreCase(String weekdayEnum);
 
 }

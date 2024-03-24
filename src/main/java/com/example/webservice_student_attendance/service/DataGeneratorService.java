@@ -93,7 +93,7 @@ public class DataGeneratorService {
         studyGroup.setShortName("ИС - " + j++);
         studyGroup.setKafedra(kafedra);
         studyGroup.setGroupSize(30);
-        studyGroup.setYearAdmission(faker.date().birthday());
+        //studyGroup.setYearAdmission(faker.date().birthday());
         Specialization specialization = new Specialization();
         specialization.setName("Программист");
         specialization.setShortName("Прг");

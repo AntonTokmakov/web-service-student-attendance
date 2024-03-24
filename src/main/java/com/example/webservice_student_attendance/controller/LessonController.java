@@ -20,10 +20,13 @@ public class LessonController {
 
     private final LessonService lessonService;
 
+    int group = 0;
+
+    // надо выдавать пару по определенных датам, а не только днеё недели
     @GetMapping("weekdays/{weekday}") // надо обработать возможную ошибку
     public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable WeekdayEnum weekday){
         // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-        int group = 98;
+        group = 98;
         List<Lesson> lessonList = null;
         try {
             lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday).orElseThrow();
@@ -34,17 +37,12 @@ public class LessonController {
         return ResponseEntity.ok(lessonList);
     }
 
-    @GetMapping("weekdays")
-    public Lesson getLessonGroupAndWeekda(){
-        // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-
-        return lessonService.findById(1).orElseThrow();
-
-    }
-
     @GetMapping("week")
     public List<Lesson> getLessonGroupAndWeek(){
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
+
+
+
         return null;
     }
 

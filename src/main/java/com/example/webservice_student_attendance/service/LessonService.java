@@ -26,7 +26,7 @@ public class LessonService {
     public Optional<List<Lesson>> findLessonsGroupAndWeekday(Integer group, WeekdayEnum weekdayEnum) throws NotFountStudyGroup, InvalidParameterException {
 
         StudyGroup studyGroup = studyGroupRepository.findById((long) group).orElseThrow(() -> new NotFountStudyGroup());
-        Weekday weekday = weekdayRepository.findByName(weekdayEnum.name()).orElseThrow(() -> new InvalidParameterException("День недели не найден"));
+        Weekday weekday = weekdayRepository.findByNameIgnoreCase(weekdayEnum.name()).orElseThrow(() -> new InvalidParameterException("День недели не найден"));
 
         return lessonRepository.findLessonsByStudyGroupListAndWeekdayOrderByNumberLesson(studyGroup, weekday);
 

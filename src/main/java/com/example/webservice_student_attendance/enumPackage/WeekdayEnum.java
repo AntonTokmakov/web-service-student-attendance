@@ -1,11 +1,13 @@
 package com.example.webservice_student_attendance.enumPackage;
 
 public enum WeekdayEnum {
-    Понедельник,
-    Вторник,
-    Среда,
-    Четверг,
-    Пятница,
+    ПОНЕДЕЛЬНИК,
+    ВТОРНИК,
+    СРЕДА,
+    ЧЕТВЕРГ,
+    ПЯТНИЦА,
+    СБ,
+    СУББОТА,
     MONDAY,
     TUESDAY,
     WEDNESDAY,
