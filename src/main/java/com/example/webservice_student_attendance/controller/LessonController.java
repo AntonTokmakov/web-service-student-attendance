@@ -2,6 +2,7 @@ package com.example.webservice_student_attendance.controller;
 
 import com.example.webservice_student_attendance.Excaption.NotFountStudyGroup;
 import com.example.webservice_student_attendance.entity.Lesson;
+import com.example.webservice_student_attendance.enumPackage.ParityWeekEnum;
 import com.example.webservice_student_attendance.enumPackage.WeekdayEnum;
 import com.example.webservice_student_attendance.service.LessonService;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,11 @@ public class LessonController {
     @GetMapping("weekdays/{weekday}") // надо обработать возможную ошибку
     public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable WeekdayEnum weekday){
         // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-        group = 1;
+        group = 13;
+        ParityWeekEnum parity = ParityWeekEnum.НЕЧЕТНАЯ;
         List<Lesson> lessonList = null;
         try {
-            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday).orElseThrow();
+            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday, parity).orElseThrow();
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }

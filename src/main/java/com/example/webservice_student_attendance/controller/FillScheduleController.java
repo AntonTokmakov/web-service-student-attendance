@@ -14,8 +14,6 @@ import java.util.Date;
 @RequestMapping("schedule/")
 public class FillScheduleController {
 
-    // сделать чтение из pdf на сайте сибгиу и в сервисе сохранить расписание в БД
-
     private final FillSheduleService sheduleService;
 
     @GetMapping("update")

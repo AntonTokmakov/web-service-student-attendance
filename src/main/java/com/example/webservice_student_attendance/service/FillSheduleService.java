@@ -133,8 +133,9 @@ public class FillSheduleService {
                         String[] disciplinInfo = disciplinInfoToArray(nowCell);
 
                         Lesson lesson = Lesson.builder()
-                                .discipline(existsDisciplinAndCreate(disciplinInfo[0]))
-                                .teacherList(existsTeacherAndCreate(disciplinInfo))
+                                .discipline(existsDisciplinNameAndCreate(disciplinInfo[0]))
+                                .teacherList(existsTeacherAndCreate(Arrays
+                                        .copyOfRange(disciplinInfo, 1, disciplinInfo.length)))
                                 .studyGroupList(List.of(studyGroup))
                                 .typeLesson(typeLessonRepository.findByName("Практика")
                                         .orElseThrow(() ->
@@ -165,7 +166,7 @@ public class FillSheduleService {
         }
 
         try {
-            workbook.close(); // Закрытие файла после использования
+            workbook.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -175,15 +176,10 @@ public class FillSheduleService {
 
     private List<Teacher> existsTeacherAndCreate(String[] disciplinInfo) {
 
-        String fioTeacher = Arrays.stream(disciplinInfo)
-                .filter(e -> e.startsWith("п"))
-                .map(e -> e.substring(5))
-                .map(String::trim)
-                .collect(Collectors.joining());
-
         String[] fioTeachers = Arrays
-                .stream(fioTeacher
-                .split("\\s|\\."))
+                .stream(Arrays.toString(disciplinInfo)
+                        .replaceAll("\\[|\\]", "")
+                        .split("\\s|\\.,\\s|\\."))
                 .map(String::trim)
                 .toArray(String[]::new);
 
@@ -207,7 +203,7 @@ public class FillSheduleService {
         return teacherList;
     }
 
-    private Discipline existsDisciplinAndCreate(String name) {
+    private Discipline existsDisciplinNameAndCreate(String name) {
 
         Discipline discipline = null;
 
@@ -253,22 +249,10 @@ public class FillSheduleService {
     }
 
     private String[] disciplinInfoToArray(String nowCell){
-        String[] parts = nowCell.split("\\s{2,}|\n");// Разделение строки по двойным или более пробелам
-        String endItem = parts[parts.length-1];
-        if (endItem.contains("(")){
-            parts[parts.length-1] = endItem.substring(0, endItem.lastIndexOf("(")).trim();
-        }
-        return parts;
-    }
-
-    private boolean isMergedWithBottomCell(Sheet sheet, int rowIdx, int colIdx) {
-        for (CellRangeAddress range : sheet.getMergedRegions()) {
-            if (rowIdx == range.getFirstRow() && rowIdx + 1 == range.getLastRow() &&
-                    colIdx >= range.getFirstColumn() && colIdx <= range.getLastColumn()) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(nowCell.replaceAll("\\d.*|\\(.*", "")
+                .split("преп."))
+                .map(String::trim)
+                .toList().toArray(String[]::new);
     }
 
     public boolean isCellMergedWithAdjacentCells(Sheet sheet, int rowIndex, int columnIndex) {
