@@ -1,10 +1,10 @@
 package com.example.webservice_student_attendance.controller;
 
 import com.example.webservice_student_attendance.Excaption.NotFountStudyGroup;
+import com.example.webservice_student_attendance.entity.ActualLesson;
 import com.example.webservice_student_attendance.entity.Lesson;
 import com.example.webservice_student_attendance.enumPackage.ParityWeekEnum;
-import com.example.webservice_student_attendance.enumPackage.WeekdayEnum;
-import com.example.webservice_student_attendance.service.LessonService;
+import com.example.webservice_student_attendance.service.LessonAndActualLessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -16,22 +16,25 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("lessons/")
+@RequestMapping("/lessons")
 public class LessonController {
 
-    private final LessonService lessonService;
+    private final LessonAndActualLessonService lessonService;
 
     int group = 0;
 
     // надо выдавать пару по определенных датам, а не только днеё недели
-    @GetMapping("weekdays/{weekday}") // надо обработать возможную ошибку
-    public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable WeekdayEnum weekday){
+    @GetMapping("/weekdays") // надо обработать возможную ошибку
+    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeekday(@RequestParam("weekday") String weekday){
         // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
+
         group = 13;
+
+
         ParityWeekEnum parity = ParityWeekEnum.НЕЧЕТНАЯ;
-        List<Lesson> lessonList = null;
+        List<ActualLesson> lessonList = null;
         try {
-            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday, parity).orElseThrow();
+            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday, parity);
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }
@@ -39,7 +42,7 @@ public class LessonController {
         return ResponseEntity.ok(lessonList);
     }
 
-    @GetMapping("week")
+    @GetMapping("/week")
     public List<Lesson> getLessonGroupAndWeek(){
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
 

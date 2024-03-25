@@ -1,14 +1,13 @@
 package com.example.webservice_student_attendance.service;
 
-import com.example.webservice_student_attendance.entity.Discipline;
-import com.example.webservice_student_attendance.entity.Lesson;
-import com.example.webservice_student_attendance.entity.StudyGroup;
-import com.example.webservice_student_attendance.entity.Teacher;
+import com.example.webservice_student_attendance.entity.*;
 import com.example.webservice_student_attendance.enumPackage.ParityWeekEnum;
 import com.example.webservice_student_attendance.enumPackage.WeekdayEnum;
 import com.example.webservice_student_attendance.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -22,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -29,6 +29,7 @@ import static org.apache.commons.io.FileUtils.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FillSheduleService {
 
     private final LessonRepository lessonRepository;
@@ -39,6 +40,10 @@ public class FillSheduleService {
     private final WeekdayRepository weekdayRepository;
     private final NumberLessonRepository numberLessonRepository;
     private final ParityOfWeekRepository parityOfWeekRepository;
+    private final ActualLessonRepository actualLessonRepository;
+
+    LocalDate startDate = LocalDate.of(2024, 2, 5);
+    LocalDate endDate = LocalDate.of(2024, 4, 19);
 
     public String downloadFilePdf() {
         String url = "https://www.sibsiu.ru/files/raspisanie/uc/%D0%A0%D0%B0%D1%81%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D0%B9/4%20%D0%9A%D1%83%D1%80%D1%81%20%D0%92%D0%B5%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D1%81%D0%B5%D0%BC%D0%B5%D1%81%D1%82%D1%80%202023-2024.pdf";
@@ -156,7 +161,6 @@ public class FillSheduleService {
                             lessonRepository.save(lesson);
                         }
                     }
-
                     // если пара одна строка, то сработает
                     if (!(cell != null && isCellMergedWithAdjacentCells(sheet, k, 1))) {
                         k++;
@@ -173,6 +177,80 @@ public class FillSheduleService {
 
         return "База данных успешно обновлена";
     }
+
+    public String createActualLesson(){
+
+        final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
+        final List<Weekday> weekdayList = weekdayRepository.findAll();
+        final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+        LocalDate countDate = startDate;
+        List<Lesson> countLessonList;
+        ActualLesson actualLesson;
+
+        for (StudyGroup studyGroup : studyGroupList) {
+            for (Weekday weekday : weekdayList){
+                for (ParityOfWeek parity : parityOfWeekList){
+                    countLessonList = lessonRepository.findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(studyGroup, weekday, parity).orElse(null);
+                    countDate = countDate.plusDays(1);
+                    if (countLessonList == null){
+                         log.warn("У группы не найдены занятия ", studyGroup, weekday, parity);
+                         continue;
+                    }
+                    for (Lesson lesson : countLessonList){
+                        actualLesson = ActualLesson.builder()
+                                .lesson(lesson)
+                                .date(countDate)
+                                .build();
+                        actualLessonRepository.save(actualLesson);
+                    }
+                }
+            }
+            countDate = countDate.plusDays(1);
+        }
+//        Lesson[] lessonList;
+//        List<Lesson> lessonList2;
+//        WeekdayEnum[] weekdayEnumList = new WeekdayEnum[]{
+//                WeekdayEnum.ПОНЕДЕЛЬНИК,
+//                WeekdayEnum.ВТОРНИК,
+//                WeekdayEnum.СРЕДА,
+//                WeekdayEnum.ЧЕТВЕРГ,
+//                WeekdayEnum.ПЯТНИЦА,
+//                WeekdayEnum.СУББОТА
+//        };
+//        for (StudyGroup studyGroup : studyGroupList){
+//
+//            lessonList = lessonRepository.findByStudyGroupListOrderByWeekday(studyGroup).orElse(null).toArray(Lesson[]::new);
+//            lessonList2 = lessonRepository.findByStudyGroupListOrderByWeekday(studyGroup).orElse(null);
+//
+//            if (lessonList == null){
+//                log.warn("У группы не найдены занятия. ", studyGroup);
+//                continue;
+//            }
+//
+//            Weekday weekday;
+//            ParityOfWeek parity;
+//            for (int i = 0; i < lessonList.length; i++) {
+//
+//                lessonList2.sort(Comparator.comparingInt((Lesson o) -> {
+//                    int weekdayIndex = 0;
+//                    for (int j = 0; j < weekdayEnumList.length; j++) {
+//                        if (o.getWeekday().getName().equals(weekdayEnumList[j].name())) {
+//                            weekdayIndex = j;
+//                            break;
+//                        }
+//                    }
+//                    return weekdayIndex;
+//                }).thenComparing((Lesson o) -> o.getNumberLesson().getName()));
+//
+//                int d = 0;
+////                List<Lesson> sw = lessonList2.stream().map(e -> (Lesson) e.setWeekday(weekdayRepository.findByNameIgnoreCase(weekdayEnumList[finalI].name()).orElse(null))).collect(toList());
+//            }
+//        }
+        return "Успешно созданы актульные пары";
+
+    }
+
+    // Вспомагательные
 
     private List<Teacher> existsTeacherAndCreate(String[] disciplinInfo) {
 
