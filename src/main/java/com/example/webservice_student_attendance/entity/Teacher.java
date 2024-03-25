@@ -31,7 +31,7 @@ public class Teacher {
     @NotNull
     @Size(min = 1, max = 50)
     private String secondName;
-    @Size(min = 1, max = 50)
+//    @Size(min = 1, max = 70)
     private String otchestvo;
     @ManyToOne
     @JoinColumn(name = "kafedra_id")

@@ -1,6 +1,5 @@
 package com.example.webservice_student_attendance.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -46,6 +45,11 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "type_lesson_id")
     private TypeLesson typeLesson;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "parity_week_id")
+    private ParityOfWeek parityOfWeek;
 
     @ManyToMany
     @JoinTable(

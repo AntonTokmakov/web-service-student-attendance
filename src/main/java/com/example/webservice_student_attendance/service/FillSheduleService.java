@@ -4,6 +4,7 @@ import com.example.webservice_student_attendance.entity.Discipline;
 import com.example.webservice_student_attendance.entity.Lesson;
 import com.example.webservice_student_attendance.entity.StudyGroup;
 import com.example.webservice_student_attendance.entity.Teacher;
+import com.example.webservice_student_attendance.enumPackage.ParityWeekEnum;
 import com.example.webservice_student_attendance.enumPackage.WeekdayEnum;
 import com.example.webservice_student_attendance.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,6 +38,7 @@ public class FillSheduleService {
     private final TypeLessonRepository typeLessonRepository;
     private final WeekdayRepository weekdayRepository;
     private final NumberLessonRepository numberLessonRepository;
+    private final ParityOfWeekRepository parityOfWeekRepository;
 
     public String downloadFilePdf() {
         String url = "https://www.sibsiu.ru/files/raspisanie/uc/%D0%A0%D0%B0%D1%81%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5%20%D0%B7%D0%B0%D0%BD%D1%8F%D1%82%D0%B8%D0%B9/4%20%D0%9A%D1%83%D1%80%D1%81%20%D0%92%D0%B5%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D1%81%D0%B5%D0%BC%D0%B5%D1%81%D1%82%D1%80%202023-2024.pdf";
@@ -72,7 +74,7 @@ public class FillSheduleService {
         }
 
         // считает листы
-        for (int i = 1; i < 2/*workbook.getNumberOfSheets()*/; i+=2) {
+        for (int i = 1; i < workbook.getNumberOfSheets(); i+=2) {
 
             Sheet sheet = workbook.getSheetAt(i);
             StudyGroup studyGroup = null;
@@ -109,8 +111,8 @@ public class FillSheduleService {
                 // считает строки
                 int countNumberLesson = 0;
                 WeekdayEnum weekdayEnum = null;
+                ParityWeekEnum parityWeekEnum;
                 for (int k = 1; k < sheet.getLastRowNum(); k++) {
-
 
                     String cellWeekday = sheet.getRow(k).getCell(0).getStringCellValue();
                     if (!cellWeekday.isEmpty()){
@@ -119,8 +121,11 @@ public class FillSheduleService {
                     }
 
                     // счет пар
-                    if (k % 2 != 0)
+                    if (k % 2 != 0){
                         countNumberLesson++;
+                        parityWeekEnum = ParityWeekEnum.НЕЧЕТНАЯ;
+                    } else
+                        parityWeekEnum = ParityWeekEnum.ЧЕТНАЯ;
 
                     String nowCell = sheet.getRow(k).getCell(j).getStringCellValue();
 
@@ -132,7 +137,8 @@ public class FillSheduleService {
                                 .teacherList(existsTeacherAndCreate(disciplinInfo))
                                 .studyGroupList(List.of(studyGroup))
                                 .typeLesson(typeLessonRepository.findByName("Практика")
-                                        .orElseThrow(() -> new EntityNotFoundException("Не найден тип пары name = Практика")))
+                                        .orElseThrow(() ->
+                                                new EntityNotFoundException("Не найден тип пары name = Практика")))
                                 .numberLesson(numberLessonRepository
                                         .findByNameIgnoreCase(String.valueOf(countNumberLesson))
                                         .orElseThrow(() -> new EntityNotFoundException("Не найден номер пары " +
@@ -140,36 +146,22 @@ public class FillSheduleService {
                                 .weekday(weekdayRepository.findByNameIgnoreCase(weekdayEnum.name())
                                                 .orElseThrow(() -> new EntityNotFoundException("Не найден день" +
                                                         " недели name при создании Lesson")))
+                                .parityOfWeek(parityOfWeekRepository
+                                        .findByNameIgnoreCase(parityWeekEnum.name())
+                                        .orElseThrow(() -> new EntityNotFoundException("Не найдена четность недели" +
+                                                " при создании Lesson")))
                                 .build();
                         if (!lessonRepository.exists(Example.of(lesson))) {
                             lessonRepository.save(lesson);
                         }
                     }
 
+                    // если пара одна строка, то сработает
                     if (!(cell != null && isCellMergedWithAdjacentCells(sheet, k, 1))) {
                         k++;
                     }
                 }
             }
-//            // Поиск группы по наименованию
-//            StudyGroup group = studyGroupRepository.findByShortNameLikeIgnoreCase(shortName).orElseThrow();
-//
-//            if (group == null) {
-//                // Создание новой группы
-//                group = new StudyGroup();
-//                group.setShortName(shortName);
-//                studyGroupRepository.save(group);
-//            }
-//
-//            // Чтение и обработка данных по столбцу C
-//            for (int i = 1; i < sheet.getLastRowNum(); i++) {
-//                Row currentRow = sheet.getRow(i);
-//                Cell currentCell = currentRow.getCell(2); // Столбец C
-//
-//                String pairName = currentCell.getStringCellValue();
-//                // Проверка наличия пары в репозитории и создание при необходимости
-//                // Добавьте здесь соответствующую логику
-//            }
         }
 
         try {

@@ -26,7 +26,7 @@ public class LessonController {
     @GetMapping("weekdays/{weekday}") // надо обработать возможную ошибку
     public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable WeekdayEnum weekday){
         // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-        group = 98;
+        group = 1;
         List<Lesson> lessonList = null;
         try {
             lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday).orElseThrow();
