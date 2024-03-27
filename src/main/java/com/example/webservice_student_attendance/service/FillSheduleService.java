@@ -178,34 +178,46 @@ public class FillSheduleService {
         return "База данных успешно обновлена";
     }
 
+    // почему то заполнил все опять по одной группе на день и вперед пошел
+    // ССА пеервая парар только через месяц
+
     public String createActualLesson(){
 
         final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
         final List<Weekday> weekdayList = weekdayRepository.findAll();
         final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
-        LocalDate countDate = startDate;
+        LocalDate countDate;
         List<Lesson> countLessonList;
         ActualLesson actualLesson;
 
         for (StudyGroup studyGroup : studyGroupList) {
-            for (Weekday weekday : weekdayList){
-                for (ParityOfWeek parity : parityOfWeekList){
-                    countLessonList = lessonRepository.findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(studyGroup, weekday, parity).orElse(null);
+            countDate = startDate;
+
+            while (countDate.isBefore(endDate)) {
+                for (Weekday weekday : weekdayList) {
+
+                    for (ParityOfWeek parity : parityOfWeekList) {
+                        countLessonList = lessonRepository.
+                                findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                        studyGroup,
+                                        weekday,
+                                        parity
+                                ).orElse(null);
+                        if (countLessonList == null || countLessonList.isEmpty()) {
+                            log.warn("У группы не найдены занятия ", studyGroup, weekday, parity);
+                            continue;
+                        }
+                        for (Lesson lesson : countLessonList) {
+                            actualLesson = ActualLesson.builder()
+                                    .lesson(lesson)
+                                    .date(countDate)
+                                    .build();
+                            actualLessonRepository.save(actualLesson);
+                        }
+                    }
                     countDate = countDate.plusDays(1);
-                    if (countLessonList == null){
-                         log.warn("У группы не найдены занятия ", studyGroup, weekday, parity);
-                         continue;
-                    }
-                    for (Lesson lesson : countLessonList){
-                        actualLesson = ActualLesson.builder()
-                                .lesson(lesson)
-                                .date(countDate)
-                                .build();
-                        actualLessonRepository.save(actualLesson);
-                    }
                 }
             }
-            countDate = countDate.plusDays(1);
         }
 //        Lesson[] lessonList;
 //        List<Lesson> lessonList2;

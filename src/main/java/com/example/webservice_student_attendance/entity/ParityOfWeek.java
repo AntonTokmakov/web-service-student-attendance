@@ -2,9 +2,13 @@ package com.example.webservice_student_attendance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-
+@Table
+@Data
+@NoArgsConstructor
 public class ParityOfWeek {
 
     @Id

@@ -14,6 +14,7 @@ INSERT INTO weekday (name) VALUES ('Среда');
 INSERT INTO weekday (name) VALUES ('Четверг');
 INSERT INTO weekday (name) VALUES ('Пятница');
 INSERT INTO weekday (name) VALUES ('Суббота');
+INSERT INTO weekday (name) VALUES ('Воскресение');
 
 INSERT INTO parity_of_week (name) VALUES ('Четная');
 INSERT INTO parity_of_week (name) VALUES ('Нечетная');

@@ -72,6 +72,12 @@ public class LessonAndActualLessonService {
 
     }
 
+    public List<ActualLesson> findActualLessonByDateAndStudy(LocalDate date, int groupId) throws NotFountStudyGroup {
+
+        return actualLessonRepository.findActualLessonsByDateAndStudyGroup(date, groupId);
+
+    }
+
     public Optional<Lesson> findById(int id){
         return lessonRepository.findById((long) id);
     }

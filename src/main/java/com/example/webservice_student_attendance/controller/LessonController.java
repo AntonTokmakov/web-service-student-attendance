@@ -4,6 +4,8 @@ import com.example.webservice_student_attendance.Excaption.NotFountStudyGroup;
 import com.example.webservice_student_attendance.entity.ActualLesson;
 import com.example.webservice_student_attendance.entity.Lesson;
 import com.example.webservice_student_attendance.enumPackage.ParityWeekEnum;
+import com.example.webservice_student_attendance.repository.ActualLessonRepository;
+import com.example.webservice_student_attendance.repository.LessonRepository;
 import com.example.webservice_student_attendance.service.LessonAndActualLessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.InvalidParameterException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,22 +22,23 @@ import java.util.List;
 @RequestMapping("/lessons")
 public class LessonController {
 
-    private final LessonAndActualLessonService lessonService;
+    private final LessonAndActualLessonService lessonAndActualLessonService;
 
     int group = 0;
 
     // надо выдавать пару по определенных датам, а не только днеё недели
     @GetMapping("/weekdays") // надо обработать возможную ошибку
-    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeekday(@RequestParam("weekday") String weekday){
+    public ResponseEntity<List<ActualLesson>> getActualLessonByDateAndStudyGroup(@RequestParam("weekday") String weekday){
         // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
 
         group = 13;
 
+//        lessonAndActualLessonService.findActualLessonByDateAndStudy(date, group);
 
         ParityWeekEnum parity = ParityWeekEnum.НЕЧЕТНАЯ;
         List<ActualLesson> lessonList = null;
         try {
-            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday, parity);
+            lessonList = lessonAndActualLessonService.findLessonsGroupAndWeekday(group, weekday, parity);
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }
@@ -42,13 +46,43 @@ public class LessonController {
         return ResponseEntity.ok(lessonList);
     }
 
+
+
+    // удалить
+    private final ActualLessonRepository actualLessonRepository;
+
+
     @GetMapping("/week")
-    public List<Lesson> getLessonGroupAndWeek(){
+    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeek(@RequestParam("id") int id){
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
 
 
+        group = 13;
 
-        return null;
+        LocalDate date = LocalDate.of(2024, 2, 6);
+        List<ActualLesson> actualLessonList;
+
+        try {
+            actualLessonList = lessonAndActualLessonService.findActualLessonByDateAndStudy(date, group);
+        } catch (NotFountStudyGroup e) {
+            throw new RuntimeException("Ошибка, упсс");
+        }
+
+        return ResponseEntity.ok(actualLessonList);
+//        LocalDate date = LocalDate.of(2024, 2, 5);
+//
+//        return actualLessonRepository.findById((long) id).orElse(null);
+    }
+
+    private final LessonRepository lessonRepository;
+
+    @GetMapping("/week2")
+    public Lesson getLessonGroupAndWeek2(){
+        // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
+
+        int idLesson = 178;
+
+        return lessonRepository.findById((long) idLesson).orElse(null);
     }
 
 
