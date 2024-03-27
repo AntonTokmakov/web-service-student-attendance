@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -301,50 +302,139 @@ public class FillSheduleService {
         return "База данных успешно обновлена";
     }*/
 
+    // работает отлично но только до нечетной недели
+
     public String createActualLesson() {
         final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
         final List<Weekday> weekdayList = weekdayRepository.findAll();
         final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+        LocalDate countDate = startDate;
 
         for (StudyGroup studyGroup : studyGroupList) {
-            LocalDate countDate = startDate;
+            countDate = startDate;
 
-            for (ParityOfWeek parity : parityOfWeekList) {
-                for (Weekday weekday : weekdayList) {
-                    // Skip weekends (Saturday and Sunday)
-                    if (countDate.getDayOfWeek() == DayOfWeek.SATURDAY || countDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            while (countDate.isBefore(endDate)) {
+
+                for (ParityOfWeek parity : parityOfWeekList) {
+                    for (Weekday weekday : weekdayList) {
+                        // Skip weekends (Saturday and Sunday)
+                        if (countDate.getDayOfWeek() == DayOfWeek.SATURDAY || countDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                            countDate = countDate.plusDays(1);
+                            continue;
+                        }
+
+                        List<Lesson> countLessonList = lessonRepository
+                                .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                        studyGroup,
+                                        weekday,
+                                        parity
+                                ).orElse(null);
+
+                        if (countLessonList == null || countLessonList.isEmpty()) {
+                            // Skip if there are no lessons for the current weekday
+                            countDate = countDate.plusDays(1);
+                            continue;
+                        }
+
+                        for (Lesson lesson : countLessonList) {
+                            ActualLesson actualLesson = ActualLesson.builder()
+                                    .lesson(lesson)
+                                    .date(countDate)
+                                    .build();
+                            actualLessonRepository.save(actualLesson);
+                        }
+
                         countDate = countDate.plusDays(1);
-                        continue;
                     }
+                }
+//                countDate = countDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+            }
+        }
+        return "База данных успешно обновлена";
+    }
 
-                    List<Lesson> countLessonList = lessonRepository
-                            .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
-                                    studyGroup,
-                                    weekday,
-                                    parity
-                            ).orElse(null);
 
-                    if (countLessonList == null || countLessonList.isEmpty()) {
-                        // Skip if there are no lessons for the current weekday
-                        countDate = countDate.plusDays(1);
-                        continue;
+    /*public String createActualLesson() {
+        final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
+        final List<Weekday> weekdayList = weekdayRepository.findAll();
+        final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+        LocalDate countDate = startDate;
+
+        for (StudyGroup studyGroup : studyGroupList) {
+            for (LocalDate date = startDate; date.isBefore(LocalDate.of(2024, 4, 19)); date = date.plusDays(1)) {
+                if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    continue;
+                }
+
+                for (ParityOfWeek parity : parityOfWeekList) {
+                    for (Weekday weekday : weekdayList) {
+                        List<Lesson> lessonList = lessonRepository
+                                .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                        studyGroup,
+                                        weekday,
+                                        parity
+                                ).orElse(Collections.emptyList());
+
+                        if (lessonList.isEmpty()) {
+                            continue;
+                        }
+
+                        for (Lesson lesson : lessonList) {
+                            ActualLesson actualLesson = ActualLesson.builder()
+                                    .lesson(lesson)
+                                    .date(date)
+                                    .build();
+                            actualLessonRepository.save(actualLesson);
+                        }
                     }
-
-                    for (Lesson lesson : countLessonList) {
-                        ActualLesson actualLesson = ActualLesson.builder()
-                                .lesson(lesson)
-                                .date(countDate)
-                                .build();
-                        actualLessonRepository.save(actualLesson);
-                    }
-
-                    countDate = countDate.plusDays(1);
                 }
             }
         }
-
         return "База данных успешно обновлена";
-    }
+    }*/
+
+    /*public String createActualLesson() {
+        final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
+        final List<Weekday> weekdayList = weekdayRepository.findAll();
+        final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+        LocalDate countDate = startDate;
+
+        for (StudyGroup studyGroup : studyGroupList) {
+            for (LocalDate date = startDate; date.isBefore(LocalDate.of(2024, 4, 19)); date = date.plusDays(1)) {
+                if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    continue;
+                }
+
+                for (ParityOfWeek parity : parityOfWeekList) {
+                    for (Weekday weekday : weekdayList) {
+                        List<Lesson> lessonList = lessonRepository
+                                .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                        studyGroup,
+                                        weekday,
+                                        parity
+                                ).orElse(Collections.emptyList());
+
+                        if (lessonList.isEmpty()) {
+                            continue;
+                        }
+
+                        for (Lesson lesson : lessonList) {
+                            ActualLesson actualLesson = ActualLesson.builder()
+                                    .lesson(lesson)
+                                    .date(date)
+                                    .build();
+                            actualLessonRepository.save(actualLesson);
+                        }
+                    }
+                }
+
+//                if (date.getDayOfWeek() == DayOfWeek.FRIDAY) {
+//                    countDate = countDate.plusDays(7);
+//                }
+            }
+        }
+        return "База данных успешно обновлена";
+    }*/
 
 
     // Вспомагательные

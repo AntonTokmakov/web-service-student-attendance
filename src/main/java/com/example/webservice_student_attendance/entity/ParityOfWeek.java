@@ -19,4 +19,10 @@ public class ParityOfWeek {
     @NotNull
     @Column(unique = true)
     private String name;
+
+    public enum ParityWeekEnum {
+        ЧЕТНАЯ,
+        НЕЧЕТНАЯ
+    }
+
 }

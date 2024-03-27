@@ -57,7 +57,7 @@ public class LessonController {
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
 
 
-        group = 14;
+        group = 13;
 
         LocalDate date = LocalDate.of(2024, 2, id);
         List<ActualLesson> actualLessonList;
