@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Predicate;
@@ -181,7 +182,7 @@ public class FillSheduleService {
     // почему то заполнил все опять по одной группе на день и вперед пошел
     // ССА пеервая парар только через месяц
 
-    public String createActualLesson(){
+    /*public String createActualLesson(){
 
         final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
         final List<Weekday> weekdayList = weekdayRepository.findAll();
@@ -260,7 +261,91 @@ public class FillSheduleService {
 //        }
         return "Успешно созданы актульные пары";
 
+    }*/
+
+    /*public String createActualLesson(){
+        final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
+        final List<Weekday> weekdayList = weekdayRepository.findAll();
+        final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+
+        for (StudyGroup studyGroup : studyGroupList) {
+            LocalDate countDate = startDate;
+
+            for (ParityOfWeek parity : parityOfWeekList) {
+                for (Weekday weekday : weekdayList) {
+                    List<Lesson> countLessonList = lessonRepository
+                            .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                    studyGroup,
+                                    weekday,
+                                    parity
+                            ).orElse(null);
+
+                    if (countLessonList == null || countLessonList.isEmpty()) {
+                        // Handle missing lessons
+                        continue;
+                    }
+
+                    for (Lesson lesson : countLessonList) {
+                        ActualLesson actualLesson = ActualLesson.builder()
+                                .lesson(lesson)
+                                .date(countDate)
+                                .build();
+                        actualLessonRepository.save(actualLesson);
+                    }
+
+                    countDate = countDate.plusDays(1);
+                }
+            }
+        }
+
+        return "База данных успешно обновлена";
+    }*/
+
+    public String createActualLesson() {
+        final List<StudyGroup> studyGroupList = studyGroupRepository.findAll();
+        final List<Weekday> weekdayList = weekdayRepository.findAll();
+        final List<ParityOfWeek> parityOfWeekList = parityOfWeekRepository.findAll();
+
+        for (StudyGroup studyGroup : studyGroupList) {
+            LocalDate countDate = startDate;
+
+            for (ParityOfWeek parity : parityOfWeekList) {
+                for (Weekday weekday : weekdayList) {
+                    // Skip weekends (Saturday and Sunday)
+                    if (countDate.getDayOfWeek() == DayOfWeek.SATURDAY || countDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                        countDate = countDate.plusDays(1);
+                        continue;
+                    }
+
+                    List<Lesson> countLessonList = lessonRepository
+                            .findLessonsByStudyGroupListAndWeekdayAndParityOfWeekOrderByNumberLesson(
+                                    studyGroup,
+                                    weekday,
+                                    parity
+                            ).orElse(null);
+
+                    if (countLessonList == null || countLessonList.isEmpty()) {
+                        // Skip if there are no lessons for the current weekday
+                        countDate = countDate.plusDays(1);
+                        continue;
+                    }
+
+                    for (Lesson lesson : countLessonList) {
+                        ActualLesson actualLesson = ActualLesson.builder()
+                                .lesson(lesson)
+                                .date(countDate)
+                                .build();
+                        actualLessonRepository.save(actualLesson);
+                    }
+
+                    countDate = countDate.plusDays(1);
+                }
+            }
+        }
+
+        return "База данных успешно обновлена";
     }
+
 
     // Вспомагательные
 
