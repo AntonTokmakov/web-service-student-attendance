@@ -1,4 +1,10 @@
 spring:
+  security:
+    user:
+      name: student_attendance_user
+      password: password
+      roles:
+        - USER
   application:
     name: web-service_student_attendance
   jpa:

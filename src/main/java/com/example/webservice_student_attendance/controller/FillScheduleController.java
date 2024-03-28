@@ -19,7 +19,7 @@ public class FillScheduleController {
     @GetMapping("update")
     public ResponseEntity<String> updateSchedule(){
 
-        String response = "fsdf";//sheduleService.importDb(sheduleService.convertPdfToXlsx(sheduleService.downloadFilePdf()));
+        String response = sheduleService.importDb(sheduleService.convertPdfToXlsx(sheduleService.downloadFilePdf()));
         sheduleService.createActualLesson();
 
         return ResponseEntity.ok(response + "   " + new Date(System.currentTimeMillis()).toString());

@@ -11,9 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.security.InvalidParameterException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,52 +29,29 @@ public class LessonController {
 
     int group = 0;
 
-    // надо выдавать пару по определенных датам, а не только днеё недели
-    @GetMapping("/weekdays") // надо обработать возможную ошибку
-    public ResponseEntity<List<ActualLesson>> getActualLessonByDateAndStudyGroup(@RequestParam("weekday") String weekday){
-        // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-
-        group = 13;
-
-//        lessonAndActualLessonService.findActualLessonByDateAndStudy(date, group);
-
-        ParityWeekEnum parity = ParityWeekEnum.НЕЧЕТНАЯ;
-        List<ActualLesson> lessonList = null;
-        try {
-            lessonList = lessonAndActualLessonService.findLessonsGroupAndWeekday(group, weekday, parity);
-        } catch (NotFountStudyGroup | InvalidParameterException e){
-            e.getStackTrace();
-        }
-
-        return ResponseEntity.ok(lessonList);
-    }
-
-
-
     // удалить
     private final ActualLessonRepository actualLessonRepository;
 
 
-    @GetMapping("/week")
-    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeek(@RequestParam("id") int id){
+    @GetMapping("/weekdays")
+    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeek(@RequestParam("day") int id){
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
-
-
-        group = 21;
-
-        LocalDate date = LocalDate.of(2024, 2, id);
-        List<ActualLesson> actualLessonList;
-
+        //group = SecurityContextHolder.getContext().getAuthentication().getName()).getStudyGroup().getId();
+        List<ActualLesson> actualLessonList = null;
         try {
+            group = 13;
+            LocalDate date = LocalDate.of(2024, 2, id);
             actualLessonList = lessonAndActualLessonService.findActualLessonByDateAndStudy(date, group);
+        } catch (HttpClientErrorException.BadRequest e){
+            ProblemDetail problemDetail = e.getResponseBodyAs(ProblemDetail.class);
+            problemDetail.getProperties().get("errors");
         } catch (NotFountStudyGroup e) {
-            throw new RuntimeException("Ошибка, упсс");
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (DateTimeException e){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
         return ResponseEntity.ok(actualLessonList);
-//        LocalDate date = LocalDate.of(2024, 2, 5);
-//
-//        return actualLessonRepository.findById((long) id).orElse(null);
     }
 
     private final LessonRepository lessonRepository;
