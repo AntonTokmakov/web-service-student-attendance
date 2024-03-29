@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,11 +22,11 @@ public class MonitorController {
 
 
     @GetMapping("/student/pass")
-    public SetPassActualLessonGroupStudy getStudentToPass(@RequestParam("lessonId") Long lessonId){
+    public SetPassActualLessonGroupStudy getStudentToPass(@RequestParam("lessonId") Long lessonId,
+                                                          Principal principal){
 
-        // получение группы от зарегистрированного пользователя
         try {
-            return monitorService.getStudentByStudyGroupToPass(13L, lessonId);
+            return monitorService.getStudentByStudyGroupToPass(principal.getName(), lessonId);
         } catch (NotFountStudyGroup e) {
             throw new RuntimeException(e);
         }

@@ -1,19 +1,16 @@
 spring:
-  security:
-    user:
-      name: student_attendance_user
-      password: password
-      roles:
-        - USER
+#  security:
+#    user:
+#      name: student_attendance_user
+#      password: password
+#      roles:
+#        - USER
   application:
     name: web-service_student_attendance
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
-#
-#    properties:
-#      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
 
   datasource:
     url: ${DATABASE_URL}
